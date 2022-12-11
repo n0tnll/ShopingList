@@ -1,17 +1,15 @@
 package com.shv.android.shopinglist.presentation
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.shv.android.shopinglist.R
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivityTest"
     private lateinit var mainViewModel: MainViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var shopListAdapter: ShopListAdapter
@@ -20,8 +18,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(this, ShopItemActivity::class.java)
-        startActivity(intent)
+        val btnAddShopItem = findViewById<FloatingActionButton>(R.id.btnAddShopItem)
+        btnAddShopItem.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
 
         setupRecyclerView()
 
@@ -75,7 +76,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupOnClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            Log.d(TAG, it.toString())
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 

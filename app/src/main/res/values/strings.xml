@@ -4,4 +4,7 @@
     <string name="save_btn">Save</string>
     <string name="name_hint">Name</string>
     <string name="count_hint">Count</string>
+    <string name="error_input_name">Title field should not be empty.</string>
+    <string name="error_input_count">Count field should not be empty.</string>
+    <string name="error_input_count_zero">Count should not be 0 or less</string>
 </resources>
