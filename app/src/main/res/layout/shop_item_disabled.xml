@@ -4,15 +4,14 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardBackgroundColor="@color/purple_200"
     app:cardCornerRadius="8dp"
     app:cardElevation="1dp"
-    android:alpha="0.4"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#33BB86FC"
         android:orientation="horizontal">
 
         <TextView
