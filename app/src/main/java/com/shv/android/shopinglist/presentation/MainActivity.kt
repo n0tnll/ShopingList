@@ -2,6 +2,8 @@ package com.shv.android.shopinglist.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -14,15 +16,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var shopListAdapter: ShopListAdapter
 
+    private var shop_item_container: FragmentContainerView? = null
+    private lateinit var btnAddShopItem: FloatingActionButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val btnAddShopItem = findViewById<FloatingActionButton>(R.id.btnAddShopItem)
-        btnAddShopItem.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
-        }
+
+        initViews()
+
+        setOnAddButtonClickListener()
 
         setupRecyclerView()
 
@@ -30,6 +34,19 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
         }
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun initViews() {
+        btnAddShopItem = findViewById(R.id.btnAddShopItem)
+        shop_item_container = findViewById(R.id.shop_item_container)
     }
 
     private fun setupRecyclerView() {
@@ -48,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupOnLongClickListener()
-        setupOnClickListener()
+        setupOnItemClickListener()
         setupSwipeToDelete()
     }
 
@@ -74,10 +91,25 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun setupOnClickListener() {
+    private fun setOnAddButtonClickListener() {
+        btnAddShopItem.setOnClickListener {
+            if (shop_item_container == null) {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            } else {
+                launchFragment(ShopItemFragment.newInstanceAddItem())
+            }
+        }
+    }
+
+    private fun setupOnItemClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+            if (shop_item_container == null) {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            } else {
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            }
         }
     }
 

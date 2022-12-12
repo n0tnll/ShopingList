@@ -3,31 +3,23 @@ package com.shv.android.shopinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.shv.android.shopinglist.R
 import com.shv.android.shopinglist.domain.ShopItem
 
 class ShopItemActivity : AppCompatActivity() {
-    //
-//    private lateinit var tilTitle: TextInputLayout
-//    private lateinit var tilCount: TextInputLayout
-//    private lateinit var etItemTitle: TextInputEditText
-//    private lateinit var etItemCount: TextInputEditText
-//    private lateinit var btnSave: MaterialButton
-//
-//    private lateinit var shopItemViewModel: ShopItemViewModel
-//
+
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("ShopItemActivityTest", "onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-//
-        launchRightMode()
-//        textWatchers()
-//        observeErrors()
+        if (savedInstanceState == null)
+            launchRightMode()
     }
 
     private fun launchRightMode() {
@@ -38,58 +30,10 @@ class ShopItemActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container, fragment)
+            .replace(R.id.shop_item_container, fragment)
             .commit()
     }
 
-    //    private fun launchEditMode() {
-//        shopItemViewModel.getShopItem(shopItemId)
-//        shopItemViewModel.shopList.observe(this) {
-//            etItemTitle.setText(it.title)
-//            etItemCount.setText(it.count.toString())
-//        }
-//        btnSave.setOnClickListener {
-//            val name = etItemTitle.text.toString()
-//            val count = etItemCount.text.toString()
-//            shopItemViewModel.editShopItem(name, count)
-//            closeScreen()
-//        }
-//    }
-//
-//    private fun launchAddMode() {
-//        btnSave.setOnClickListener {
-//            val name = etItemTitle.text.toString()
-//            val count = etItemCount.text.toString()
-//            shopItemViewModel.addShopItem(name, count)
-//            closeScreen()
-//        }
-//    }
-//
-//    private fun closeScreen() {
-//        shopItemViewModel.isComplete.observe(this) {
-//            finish()
-//        }
-//    }
-//
-//
-//
-//    private fun observeErrors() {
-//        shopItemViewModel.errorInputName.observe(this) {
-//            if (it)
-//                tilTitle.error = getString(R.string.error_input_name)
-//            else
-//                tilTitle.error = null
-//        }
-//
-//        shopItemViewModel.errorInputCount.observe(this) {
-//            if (it)
-//                tilCount.error = getString(R.string.error_input_count)
-//            else
-//                tilCount.error = null
-//        }
-//    }
-//
-//
     companion object {
         fun newIntentAddItem(context: Context): Intent {
             val intent = Intent(context, ShopItemActivity::class.java)
