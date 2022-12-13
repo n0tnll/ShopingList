@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.shv.android.shopinglist.R
 import com.shv.android.shopinglist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -69,5 +69,10 @@ class ShopItemActivity : AppCompatActivity() {
                 throw RuntimeException("Param shop item id is absent")
             shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }

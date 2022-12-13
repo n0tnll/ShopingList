@@ -1,7 +1,6 @@
 package com.shv.android.shopinglist.presentation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +26,17 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +108,7 @@ class ShopItemFragment : Fragment() {
 
     private fun closeScreen() {
         shopItemViewModel.isComplete.observe(viewLifecycleOwner) {
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -176,5 +187,9 @@ class ShopItemFragment : Fragment() {
         etItemTitle = view.findViewById(R.id.etItemTitle)
         etItemCount = view.findViewById(R.id.etItemCount)
         btnSave = view.findViewById(R.id.btnSave)
+    }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 }
