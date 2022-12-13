@@ -1,6 +1,7 @@
 package com.shv.android.shopinglist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -23,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         initViews()
 
         setOnAddButtonClickListener()
@@ -37,11 +37,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchFragment(fragment: Fragment) {
-        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.shop_item_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onBackPressed() {
+        supportFragmentManager.popBackStack("add", 0)
     }
 
     private fun initViews() {
@@ -118,5 +121,4 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.editShopItem(it)
         }
     }
-
 }

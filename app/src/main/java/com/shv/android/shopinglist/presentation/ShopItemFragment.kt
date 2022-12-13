@@ -56,6 +56,22 @@ class ShopItemFragment : Fragment() {
         observeErrors()
     }
 
+    private fun parseParams() {
+        val args = requireArguments()
+        if (!args.containsKey(SCREEN_MODE))
+            throw RuntimeException("Param screen mode is absent")
+        val mode = args.getString(SCREEN_MODE)
+        if (mode != MODE_ADD && mode != MODE_EDIT)
+            throw RuntimeException("Unknown screen mode $mode")
+        screenMode = mode
+
+        if (screenMode == MODE_EDIT) {
+            if (!args.containsKey(SHOP_ITEM_ID))
+                throw RuntimeException("Param shop item id is absent")
+            shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+        }
+    }
+
 
     private fun launchEditMode() {
         shopItemViewModel.getShopItem(shopItemId)
@@ -82,7 +98,6 @@ class ShopItemFragment : Fragment() {
 
     private fun closeScreen() {
         shopItemViewModel.isComplete.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 
@@ -161,21 +176,5 @@ class ShopItemFragment : Fragment() {
         etItemTitle = view.findViewById(R.id.etItemTitle)
         etItemCount = view.findViewById(R.id.etItemCount)
         btnSave = view.findViewById(R.id.btnSave)
-    }
-
-    private fun parseParams() {
-        val args = requireArguments()
-        if (!args.containsKey(SCREEN_MODE))
-            throw RuntimeException("Param screen mode is absent")
-        val mode = args.getString(SCREEN_MODE)
-        if (mode != MODE_ADD && mode != MODE_EDIT)
-            throw RuntimeException("Unknown screen mode $mode")
-        screenMode = mode
-
-        if (screenMode == MODE_EDIT) {
-            if (!args.containsKey(SHOP_ITEM_ID))
-                throw RuntimeException("Param shop item id is absent")
-            shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
-        }
     }
 }
