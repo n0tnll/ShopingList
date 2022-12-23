@@ -4,33 +4,30 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.shv.android.shopinglist.R
+import com.shv.android.shopinglist.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener{
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var recyclerView: RecyclerView
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(this)[MainViewModel::class.java]
+    }
+
     private lateinit var shopListAdapter: ShopListAdapter
 
-    private var shop_item_container: FragmentContainerView? = null
-    private lateinit var btnAddShopItem: FloatingActionButton
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        initViews()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setOnAddButtonClickListener()
 
         setupRecyclerView()
-
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         mainViewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
         }
@@ -43,24 +40,18 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             .commit()
     }
 
-    private fun initViews() {
-        btnAddShopItem = findViewById(R.id.btnAddShopItem)
-        shop_item_container = findViewById(R.id.shop_item_container)
-    }
-
     private fun setupRecyclerView() {
-        recyclerView = findViewById(R.id.rvShopList)
         shopListAdapter = ShopListAdapter()
-        with(recyclerView) {
-            recycledViewPool.setMaxRecycledViews(
+        with(binding) {
+            rvShopList.recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.ITEM_STATE_ENABLED,
                 ShopListAdapter.MAX_POOL_SIZE
             )
-            recycledViewPool.setMaxRecycledViews(
+            rvShopList.recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.ITEM_STATE_DISABLED,
                 ShopListAdapter.MAX_POOL_SIZE
             )
-            adapter = shopListAdapter
+            rvShopList.adapter = shopListAdapter
         }
 
         setupOnLongClickListener()
@@ -87,12 +78,12 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteItemCallback)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding.rvShopList)
     }
 
     private fun setOnAddButtonClickListener() {
-        btnAddShopItem.setOnClickListener {
-            if (shop_item_container == null) {
+        binding.btnAddShopItem.setOnClickListener {
+            if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {
@@ -103,7 +94,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
     private fun setupOnItemClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            if (shop_item_container == null) {
+            if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentEditItem(this, it.id)
                 startActivity(intent)
             } else {
@@ -116,6 +107,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         shopListAdapter.onShopItemLongClickListener = {
             mainViewModel.editShopItem(it)
         }
+    }
+
+    private fun isOnePaneMode(): Boolean {
+        return binding.shopItemContainer == null
     }
 
     override fun onEditingFinished() {

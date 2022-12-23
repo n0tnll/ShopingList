@@ -3,10 +3,10 @@ package com.shv.android.shopinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.shv.android.shopinglist.R
+import com.shv.android.shopinglist.databinding.ActivityShopItemBinding
 import com.shv.android.shopinglist.domain.ShopItem
 
 class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -14,10 +14,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
+    private lateinit var binding: ActivityShopItemBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("ShopItemActivityTest", "onCreate")
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_shop_item)
+        binding = ActivityShopItemBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         parseIntent()
         if (savedInstanceState == null)
             launchRightMode()

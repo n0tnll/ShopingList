@@ -2,8 +2,12 @@ package com.shv.android.shopinglist.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import com.shv.android.shopinglist.R
+import com.shv.android.shopinglist.databinding.ShopItemDisabledBinding
+import com.shv.android.shopinglist.databinding.ShopItemEnabledBinding
 import com.shv.android.shopinglist.domain.ShopItem
 
 class ShopListAdapter :
@@ -16,27 +20,37 @@ class ShopListAdapter :
         val layoutId = when (viewType) {
             ITEM_STATE_ENABLED -> R.layout.shop_item_enabled
             ITEM_STATE_DISABLED -> R.layout.shop_item_disabled
-            else -> throw RuntimeException("Unknown viewType: $viewType")
+            else -> throw RuntimeException("Unknown viewType:  $viewType")
         }
-        val view = LayoutInflater.from(parent.context).inflate(
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
             layoutId,
             parent,
             false
         )
-        return ShopItemViewHolder(view)
+        return ShopItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = getItem(position)
-        holder.itemView.setOnLongClickListener {
+        val binding = holder.binding
+        binding.root.setOnLongClickListener {
             onShopItemLongClickListener?.invoke(shopItem)
             true
         }
-        holder.itemView.setOnClickListener {
+        binding.root.setOnClickListener {
             onShopItemClickListener?.invoke(shopItem)
         }
-        holder.tvShopItem.text = shopItem.title
-        holder.tvItemCount.text = shopItem.count.toString()
+        when (binding) {
+            is ShopItemDisabledBinding -> {
+                binding.tvShopItem.text = shopItem.title
+                binding.tvItemCount.text = shopItem.count.toString()
+            }
+            is ShopItemEnabledBinding -> {
+                binding.tvShopItem.text = shopItem.title
+                binding.tvItemCount.text = shopItem.count.toString()
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
